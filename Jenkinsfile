@@ -1,20 +1,22 @@
 pipeline {
-    agent {
-        docker {
-            image 'python:3.9'
-        }
-    }
+    agent any
 
     stages {
-        stage('Install Requirements') {
+        stage('Checkout') {
             steps {
-                sh 'pip install -r requirements.txt'
+                git branch: 'main', url: 'https://github.com/nivedr009/flask-app.git'
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                sh 'python3 -m pip install -r requirements.txt'
             }
         }
 
         stage('Run Flask App') {
             steps {
-                sh 'flask run --host=0.0.0.0 --port=5000'
+                sh 'nohup python3 app.py &'
             }
         }
     }
