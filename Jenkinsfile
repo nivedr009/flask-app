@@ -1,19 +1,22 @@
 pipeline {
     agent any
+
     stages {
         stage('Checkout') {
             steps {
                 git branch: 'main', url: 'https://github.com/nivedr009/flask-app.git'
             }
         }
-        stage('Install Dependencies and Run Flask App') {
+        stage('Install Dependencies') {
             steps {
-                script {
-                    docker.image('python:3.9').inside {
-                        sh 'pip install -r requirements.txt'
-                        sh 'nohup python app.py &'
-                    }
-                }
+                // Use "python" if that's what is installed on your agent.
+                sh 'python -m pip install -r requirements.txt'
+            }
+        }
+        stage('Run Flask App') {
+            steps {
+                // Start the app in the background.
+                sh 'nohup python app.py &'
             }
         }
     }
